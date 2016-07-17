@@ -6,7 +6,7 @@
 
 Sinus::Sinus()		   
 {     
-	setParam(0.0, 5.0);		// _minVal, _maxVal
+	setParam(0.0, 5.0);		// _minVal, _maxVal в вольтах
 	setOffsetX(0.0);		// выставляет начальную фазу (в градусах)
 	setVal();				// рассчитывает значения массива сигнала	
 }
