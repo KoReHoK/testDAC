@@ -1,14 +1,15 @@
 #pragma once
-#define diskret 100		// кол-во отсчетов сигнала
+#define PI 3.14159265		// число ПИ
+#define diskret 200			// кол-во отсчетов сигнала
 #include "Arduino.h"
 
 class Signal
 {
 protected:
 	
-	uint16_t amplitude;		// амплитуда сигнала
-	uint16_t offsetY;		// смещение относительно оси OY
-	double offsetX;			// начальная фаза (в градусах)
+	double amplitude;		// амплитуда сигнала
+	double offsetY;			// смещение относительно оси OY
+	uint16_t offsetX;		// начальная фаза (в дискретах)
 
 	uint16_t val[diskret];	// массив значений сигнала
 
@@ -18,15 +19,15 @@ public:
 	Signal(void);
 	~Signal(void);
 	
-	virtual void setAmplitude(uint16_t) = 0;
-	virtual void setOffsetY(uint16_t) = 0;
+	virtual void setAmplitude(double) = 0;
+	virtual void setOffsetY(double) = 0;
 	virtual void setOffsetX(double) = 0;
 
-	virtual uint16_t getAmplitude(void) const = 0;
-	virtual uint16_t getOffsetY(void) const = 0;
+	virtual double getAmplitude(void) const = 0;
+	virtual double getOffsetY(void) const = 0;
 	virtual uint16_t getOffsetX(void) const = 0;
 
-	virtual void setVal(void) = 0;
+	virtual void setVal(double) = 0;
 	virtual uint16_t getVal(int) const = 0;
 
 	virtual void setParam(double, double) = 0;

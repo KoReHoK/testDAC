@@ -4,24 +4,30 @@
 #include "C:\Users\Andrey\Desktop\Linerization\Working Test\testDAC\include\Rectangle.h"
 
 #define DACQTY 1			// number of active channels from 1 to 5 (5 includes all the channels)
-#define voltage 1			// selects the signal generation mode from 1 to 6
 #define sspin 10			// pin Slave Select on Arduino
 #define numberCanal 1		// number of channel output signal from 1 to 4
 
+#define minValue -9.0		// value in volts
+#define maxValue -1.0
+#define offSetX 0.0			// value in degrees (нужно добавить проверку)
 #define frequnce 1			// real frequency signal generation is obtained if frequnce*diskret in mks  
 
-Sinus sinus;				// generates sine wave signal
-//Rectangle rectangle;				
+Sinus sinus(minValue, maxValue, offSetX);	
+//Rectangle rectangle(minValue, maxValue, offSetX);				
 //Saw saw;					
 //Triangle triangle;		// implemented as a special case of the saw
 
-volatile int count = 0;		// use volatile for shared variables
+uint16_t count = sinus.getOffsetX();		// задает начальную фазу сигнала
+byte voltage = sinus.getMode();				// selects the signal generation mode from 1 to 6
+//uint16_t count = rectangle.getOffsetX();
+//byte voltage = rectangle.getMode();
 
 
 void funcStart(void) {
 
 	if (count >= diskret) count = 0;
 	SetDAC(sinus.getVal(count), numberCanal);
+//	SetDAC(rectangle.getVal(count), numberCanal);
 	count++;
 
 }
