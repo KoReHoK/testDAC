@@ -2,6 +2,8 @@
 #include "C:\Users\Andrey\Desktop\Linerization\Working Test\DueTimer-master\DueTimer.h"
 #include "C:\Users\Andrey\Desktop\Linerization\Working Test\testDAC\include\Sinus.h"
 #include "C:\Users\Andrey\Desktop\Linerization\Working Test\testDAC\include\Rectangle.h"
+#include "C:\Users\Andrey\Desktop\Linerization\Working Test\testDAC\include\Triangle.h"
+
 
 #define DACQTY 1			// number of active channels from 1 to 5 (5 includes all the channels)
 #define sspin 10			// pin Slave Select on Arduino
@@ -13,14 +15,17 @@
 #define frequnce 1			// real frequency signal generation is obtained if frequnce*diskret in mks  
 
 Sinus sinus(minValue, maxValue, offSetX);	
-//Rectangle rectangle(minValue, maxValue, offSetX);				
-//Saw saw;					
-//Triangle triangle;		// implemented as a special case of the saw
+//Rectangle rectangle(minValue, maxValue, offSetX);									
+//Triangle triangle(minValue, maxValue, offSetX);
 
 uint16_t count = sinus.getOffsetX();		// задает начальную фазу сигнала
 byte voltage = sinus.getMode();				// selects the signal generation mode from 1 to 6
+
 //uint16_t count = rectangle.getOffsetX();
 //byte voltage = rectangle.getMode();
+
+//uint16_t count = triangle.getOffsetX();
+//byte voltage = triangle.getMode();
 
 
 void funcStart(void) {
@@ -28,6 +33,8 @@ void funcStart(void) {
 	if (count >= diskret) count = 0;
 	SetDAC(sinus.getVal(count), numberCanal);
 //	SetDAC(rectangle.getVal(count), numberCanal);
+//	SetDAC(triangle.getVal(count), numberCanal);
+
 	count++;
 
 }

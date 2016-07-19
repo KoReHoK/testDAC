@@ -10,6 +10,7 @@ protected:
 	double amplitude;		// амплитуда сигнала
 	double offsetY;			// смещение относительно оси OY
 	uint16_t offsetX;		// начальная фаза (в дискретах)
+	uint16_t cycles;		// кол-во циклов
 
 	uint16_t val[diskret];	// массив значений сигнала
 
@@ -19,21 +20,23 @@ public:
 	Signal(void);
 	~Signal(void);
 	
-	virtual void setAmplitude(double) = 0;
-	virtual void setOffsetY(double) = 0;
-	virtual void setOffsetX(double) = 0;
+	void setAmplitude(double);
+	void setOffsetY(double);
+	void setOffsetX(double);
+	void setCycles(uint16_t);
 
-	virtual double getAmplitude(void) const = 0;
-	virtual double getOffsetY(void) const = 0;
-	virtual uint16_t getOffsetX(void) const = 0;
+	double getAmplitude(void) const;
+	double getOffsetY(void) const;
+	uint16_t getOffsetX(void) const;
+	uint16_t getCycles(void) const;
 
 	virtual void setVal(double) = 0;
-	virtual uint16_t getVal(int) const = 0;
+	uint16_t getVal(int) const;
 
-	virtual void setParam(double, double) = 0;
+	void setParam(double, double);
 
-	virtual void setMode(byte) = 0;
-	virtual byte getMode(void) const = 0;
+	void setMode(byte);
+	byte getMode(void) const;
 
 };
 

@@ -6,23 +6,9 @@ class Sinus :
 public:
 
 	Sinus(double, double, double);	// _minVal, _maxVal, OffsetX
-
 	~Sinus(void);
 
-	void setAmplitude(double);
-	void setOffsetY(double);
-	void setOffsetX(double);
+	void setVal(double);			// инициализирует массив значений сигнала sin(x)
 
-	double getAmplitude(void) const;
-	double getOffsetY(void) const;
-	uint16_t getOffsetX(void) const;
-
-	void setVal(double);
-	uint16_t getVal(int) const;
-
-	void setParam(double, double);
-
-	void setMode(byte);
-	byte getMode(void) const;
 };
 
