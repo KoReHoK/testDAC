@@ -3,11 +3,17 @@
 class Triangle : 
 	public Signal
 {
+private:
+	int symmetry;
 public:
 
-	Triangle(double, double, double);	// _minVal, _maxVal, OffsetX
+	Triangle(float, float, float, uint16_t, uint16_t, int);	// _minVal, _maxVal, _offsetX, _frequence, _cycles, _symmetry
 	~Triangle(void);
 
-	void setVal(double);				// инициализирует массив значений сигнала треугольник
+	void setSymmetry(int);
+	int getSymmetry(void);
+
+	void setAmplitude(float);
+	void setVal(float);				// инициализирует массив значений сигнала треугольник
 
 };

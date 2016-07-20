@@ -2,20 +2,26 @@
 #include <math.h>
 
 
-Sinus::Sinus(double _minVal, double _maxVal, double _setX)
+Sinus::Sinus(float _minVal, float _maxVal, float _setX, uint16_t _freq, uint16_t _cycles)
 {
 	setParam(_minVal, _maxVal);				// _minVal, _maxVal "размах" сигнала в вольтах
 	setOffsetX(_setX);						// выставляет начальную фазу (в градусах)
+	setFrequence(_freq);					// выставляет частоту сигнала
+	setCycles(_cycles);						// выставляет число генерируемых периодов ( 0 - continium mode )
 }
 
 Sinus::~Sinus()
 {
 }
 
+//----------------------------------------------------------------------------
+void Sinus::setAmplitude(float _ampl) {
+	amplitude = _ampl;
+}
 
 //------------------------------------------------------------------------------------------------
 // инициализирует массив значений сигнала sin(x)
-void Sinus::setVal(double _diap) {
+void Sinus::setVal(float _diap) {
 
 	double rad;
 	uint16_t value;

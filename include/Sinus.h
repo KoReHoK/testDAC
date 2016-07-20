@@ -5,10 +5,11 @@ class Sinus :
 {
 public:
 
-	Sinus(double, double, double);	// _minVal, _maxVal, OffsetX
+	Sinus(float, float, float, uint16_t, uint16_t);	// _minVal, _maxVal, _offsetX, _frequence, _cycles 
 	~Sinus(void);
 
-	void setVal(double);			// инициализирует массив значений сигнала sin(x)
+	void setAmplitude(float);
+	void setVal(float);			// инициализирует массив значений сигнала sin(x)
 
 };
 

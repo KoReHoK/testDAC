@@ -5,35 +5,38 @@
 #include "C:\Users\Andrey\Desktop\Linerization\Working Test\testDAC\include\Triangle.h"
 
 
-#define DACQTY 1			// number of active channels from 1 to 5 (5 includes all the channels)
+#define DACQTY 1			// number of active channels from 1 to 4
 #define sspin 10			// pin Slave Select on Arduino
 #define numberCanal 1		// number of channel output signal from 1 to 4
 
-#define minValue -9.0		// value in volts
-#define maxValue -1.0
+#define minValue 0.0		// value in volts
+#define maxValue 7.0
 #define offSetX 0.0			// value in degrees (нужно добавить проверку)
-#define frequnce 1			// real frequency signal generation is obtained if frequnce*diskret in mks  
+#define frequnce 100			// real frequency signal generation is obtained if frequnce*diskret in mks  
+#define kolCycles 0			// 0 - сcontinium mode
+#define symmetr 80			// for rectangle and triangle
 
-Sinus sinus(minValue, maxValue, offSetX);	
-//Rectangle rectangle(minValue, maxValue, offSetX);									
-//Triangle triangle(minValue, maxValue, offSetX);
 
-uint16_t count = sinus.getOffsetX();		// задает начальную фазу сигнала
-byte voltage = sinus.getMode();				// selects the signal generation mode from 1 to 6
+//Sinus sinus(minValue, maxValue, offSetX, frequnce, kolCycles);
+//Rectangle rectangle(minValue, maxValue, offSetX, frequnce, kolCycles, symmetr);									
+Triangle triangle(minValue, maxValue, offSetX, frequnce, kolCycles, symmetr);
+
+//uint16_t count = sinus.getOffsetX();		// задает начальную фазу сигнала
+//byte voltage = sinus.getMode();			// selects the signal generation mode from 1 to 6
 
 //uint16_t count = rectangle.getOffsetX();
 //byte voltage = rectangle.getMode();
 
-//uint16_t count = triangle.getOffsetX();
-//byte voltage = triangle.getMode();
+uint16_t count = triangle.getOffsetX();
+byte voltage = triangle.getMode();
 
 
 void funcStart(void) {
 
 	if (count >= diskret) count = 0;
-	SetDAC(sinus.getVal(count), numberCanal);
+//	SetDAC(sinus.getVal(count), numberCanal);
 //	SetDAC(rectangle.getVal(count), numberCanal);
-//	SetDAC(triangle.getVal(count), numberCanal);
+	SetDAC(triangle.getVal(count), numberCanal);
 
 	count++;
 
@@ -54,11 +57,13 @@ void setup() {
 	Timer1.attachInterrupt(funcStart);	
 	Timer1.start(frequnce);				
 
+	Serial.begin(9600);
 }
 
 // the loop function runs over and over again until power down or reset
 void loop() {
-
+	/*for(int i=0; i<diskret; i++)
+		Serial.println(rectangle.getSymmetry());*/
 }
 
 void ConfigDACs(int dacqty) { //CHECKED OK

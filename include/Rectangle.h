@@ -1,14 +1,20 @@
 #pragma once
-#include "c:\users\andrey\desktop\linerization\working test\testdac\include\signal.h"
+#include "C:\Users\Andrey\Desktop\Linerization\Working Test\testDAC\include\signal.h"
 class Rectangle :
 	public Signal
 {
+private:
+	int symmetry;
 public:
 
-	Rectangle(double, double, double);	// _minVal, _maxVal, OffsetX
+	Rectangle(float, float, float, uint16_t, uint16_t, int);	// _minVal, _maxVal, _offsetX, _frequence, _cycles, _symmetry
 	~Rectangle(void);
 
-	void setVal(double);				// инициализирует массив значений сигнала меандр
+	void setSymmetry(int);
+	int getSymmetry(void);
+
+	void setAmplitude(float);
+	void setVal(float);				// инициализирует массив значений сигнала меандр
 
 };
 
