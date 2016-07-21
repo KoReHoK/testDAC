@@ -75,6 +75,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\DueTimer-master\DueTimer.h" />
+    <ClInclude Include="..\include\DAC.h" />
     <ClInclude Include="..\include\Rectangle.h" />
     <ClInclude Include="..\include\Signal.h" />
     <ClInclude Include="..\include\Sinus.h" />
@@ -83,6 +84,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\DueTimer-master\DueTimer.cpp" />
+    <ClCompile Include="..\source\DAC.cpp" />
     <ClCompile Include="..\source\Rectangle.cpp" />
     <ClCompile Include="..\source\Signal.cpp" />
     <ClCompile Include="..\source\Sinus.cpp" />

@@ -1,5 +1,5 @@
 #pragma once
-#include "signal.h"
+#include "C:\Users\Andrey\Desktop\Linerization\Working Test\testDAC\include\signal.h"
 class Sinus : 
 	public Signal
 {

@@ -228,6 +228,8 @@ __attribute__((always_inline)) static __INLINE void __set_PRIMASK(uint32_t priMa
 
 
 #include <testDAC.ino>
+#include <..\source\DAC.cpp>
+#include <..\include\DAC.h>
 #include <..\..\DueTimer-master\DueTimer.cpp>
 #include <..\..\DueTimer-master\DueTimer.h>
 #include <..\source\Rectangle.cpp>
