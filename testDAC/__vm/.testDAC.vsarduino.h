@@ -10,7 +10,6 @@
 
 #ifndef _VSARDUINO_H_
 #define _VSARDUINO_H_
-#define _VMDEBUG 1
 #define printf iprintf
 #define F_CPU 84000000L
 #define ARDUINO 10609
@@ -227,17 +226,5 @@ __attribute__((always_inline)) static __INLINE void __set_PRIMASK(uint32_t priMa
 }
 
 
-#include <testDAC.ino>
-#include <..\source\DAC.cpp>
-#include <..\include\DAC.h>
-#include <..\..\DueTimer-master\DueTimer.cpp>
-#include <..\..\DueTimer-master\DueTimer.h>
-#include <..\source\Rectangle.cpp>
-#include <..\include\Rectangle.h>
-#include <..\source\Signal.cpp>
-#include <..\include\Signal.h>
-#include <..\source\Sinus.cpp>
-#include <..\include\Sinus.h>
-#include <..\source\Triangle.cpp>
-#include <..\include\Triangle.h>
+#include "testDAC.ino"
 #endif

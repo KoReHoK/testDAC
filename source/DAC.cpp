@@ -1,16 +1,11 @@
-#include "C:\Users\Andrey\Desktop\Linerization\Working Test\testDAC\include\DAC.h"
+#include "C:\Users\Andrey\Desktop\Linearization\Linerization\Working Test\version 1.1\include\DAC.h"
 
 
 
-DAC::DAC(Signal &sign, byte _numbCanal): numbCanal(_numbCanal)
+DAC::DAC(byte _numbCanal): numbCanal(_numbCanal)
 {
-	offsetX = sign.getOffsetX();
-	cycles = sign.getCycles();
-	frequence = sign.getFrequence();
-	mode = sign.getMode();
-
 	for (int i = 0; i < diskret; i++)
-		val[i] = sign.getVal(i);
+		val[i] = 0x0;
 }
 
 
@@ -18,93 +13,46 @@ DAC::~DAC()
 {
 }
 
-byte DAC::getNumbCanal(void)
-{
-	return byte(numbCanal);
-}
-
 uint16_t DAC::getFrequence(void)
 {
 	return uint16_t(frequence);
 }
 
-//--------------------------------------
-void DAC::start(void)
+uint16_t DAC::getOffsetX(void)
 {
-	if (offsetX >= diskret) offsetX = 0;
-	SetDAC(val[offsetX]);
-	offsetX++;
+	return uint16_t(offsetX);
 }
 
-void DAC::SetDAC(int DACValue) { //CHECKED OK
-
-	unsigned long DACAddress;
-	unsigned long data;	//data is the voltage requested from the user application
-
-
-	switch (numbCanal) {
-
-	case 1:
-
-		DACAddress = 0x00000;
-		data = DACAddress | DACValue;
-
-		break;
-
-	case 2:
-
-		DACAddress = 0x10000;
-		data = DACAddress | DACValue;
-
-		break;
-
-	case 3:
-
-		DACAddress = 0x20000;
-		data = DACAddress | DACValue;
-
-		break;
-
-	case 4:
-
-		DACAddress = 0x30000;
-		data = DACAddress | DACValue;
-
-		break;
-
-	}
-
-	SendData(data);
-
-	LoadDACs();
-
+byte DAC::getNumbCanal(void)
+{
+	return byte(numbCanal);
 }
 
-void DAC::ConfigDACs(int dacqty) { //CHECKED OK
+void DAC::config(void)
+{
+	/*
 
-							  /*
+	0x180000 = NOP [for readback operations]
+	--------------------------------------------------------
+	OR the following together based on the options desired
+	0x190000 = CTRL Address
+	0x1 = SDO Disable Address
+	0x2 = CLR Select Address
+	0x4 = Clamp Enable Address
+	0x8 = TSD Enable Address
+	---------------------------------------------------------
+	0x1C0000 = Clear Data Address
+	---------------------------------------------------------
+	0x1D0000 = Load Data Address
+	---------------------------------------------------------
 
-							  0x180000 = NOP [for readback operations]
-							  --------------------------------------------------------
-							  OR the following together based on the options desired
-							  0x190000 = CTRL Address
-							  0x1 = SDO Disable Address
-							  0x2 = CLR Select Address
-							  0x4 = Clamp Enable Address
-							  0x8 = TSD Enable Address
-							  ---------------------------------------------------------
-							  0x1C0000 = Clear Data Address
-							  ---------------------------------------------------------
-							  0x1D0000 = Load Data Address
-							  ---------------------------------------------------------
-
-							  */
+	*/
 	unsigned long config = 0x190000 | 0x1 | 0x4; //config = CTRL address | SDO Disable | Clamp Enable
-	SendData(config);
+	sendData(config);
 
 	unsigned long output;
 
-	switch (dacqty) {
+	switch (numbCanal) {
 
 	case 4:
 
@@ -159,7 +107,7 @@ void DAC::ConfigDACs(int dacqty) { //CHECKED OK
 			break;
 		}
 
-		SendData(output);
+		sendData(output); break;
 
 	case 3:
 
@@ -216,7 +164,7 @@ void DAC::ConfigDACs(int dacqty) { //CHECKED OK
 			break;
 		}
 
-		SendData(output);
+		sendData(output); break;
 
 	case 2:
 
@@ -271,7 +219,7 @@ void DAC::ConfigDACs(int dacqty) { //CHECKED OK
 			break;
 		}
 
-		SendData(output);
+		sendData(output); break;
 
 	case 1:
 
@@ -327,58 +275,96 @@ void DAC::ConfigDACs(int dacqty) { //CHECKED OK
 			break;
 		}
 
-		SendData(output);
-
-		break;
+		sendData(output); break;
 
 	}
-
 }
-void DAC::PowerDACs(int dacqty) { //CHECKED OK
 
-	switch (dacqty) {
+void DAC::powerUpDACs(void) { //CHECKED OK
+
+	sendData(0x10000F); //Send B000100000000000000001111 to initialize 4 DACs
+}
+
+void DAC::powerDownDACs(void){
+
+	sendData(0x100000); //Send B000100000000000000000000
+}
+
+void DAC::setDAC(int DACValue, byte DACNumber) { //CHECKED OK
+
+	unsigned long DACAddress;
+	unsigned long data;	//data is the voltage requested from the user application
+
+
+	switch (DACNumber) {
 
 	case 1:
 
-		SendData(0x100001); //Send B000100000000000000000001 to initialize only the first DAC
+		DACAddress = 0x00000;
+		data = DACAddress | val[DACValue];
 
 		break;
 
 	case 2:
 
-		SendData(0x100003); //Send B000100000000000000000011 to initialize 2 DACs
+		DACAddress = 0x10000;
+		data = DACAddress | val[DACValue];
 
 		break;
 
 	case 3:
 
-		SendData(0x100007); //Send B000100000000000000000111 to initialize 3 DACs
+		DACAddress = 0x20000;
+		data = DACAddress | val[DACValue];
 
 		break;
 
 	case 4:
 
-		SendData(0x10000F); //Send B000100000000000000001111 to initialize  DACs
+		DACAddress = 0x30000;
+		data = DACAddress | val[DACValue];
 
 		break;
+
 	}
+
+	sendData(data);
+
+	loadDACs();
+
 }
 
-void DAC::LoadDACs(void) { //CHECKED OK
+void DAC::setOffsetX(uint16_t _offsetX)
+{
+	offsetX = _offsetX;
+}
+
+void DAC::setVal(Signal &sign)
+{
+	offsetX = sign.getOffsetX();
+	cycles = sign.getCycles();
+	frequence = sign.getFrequence();
+	mode = sign.getMode();
+
+	for (int i = 0; i < diskret; i++)
+		val[i] = sign.getVal(i);
+}
+
+void DAC::loadDACs(void) { //CHECKED OK
 
 	unsigned long data = 0x1D0000;
 
-	SendData(data);
+	sendData(data);
 }
-void DAC::ClearDACs(void) { //CHECKED OK
+void DAC::clearDACs(void) { //CHECKED OK
 
 	unsigned long data = 0x1C0000;
 
-	SendData(data);
+	sendData(data);
 
 }
 
-void DAC::SendData(long data) { //CHECKED OK
+void DAC::sendData(long data) { //CHECKED OK
 
 	digitalWrite(sspin, LOW);
 

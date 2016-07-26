@@ -21,9 +21,6 @@
     <ClInclude Include="__vm\.testDAC.vsarduino.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\DueTimer-master\DueTimer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\include\Sinus.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -39,11 +36,11 @@
     <ClInclude Include="..\include\DAC.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\DueTimer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\DueTimer-master\DueTimer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\source\Rectangle.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -57,6 +54,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\source\DAC.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\DueTimer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

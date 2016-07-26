@@ -1,4 +1,4 @@
-#include "C:\Users\Andrey\Desktop\Linerization\Working Test\testDAC\include\Signal.h"
+#include "C:\Users\Andrey\Desktop\Linearization\Linerization\Working Test\version 1.1\include\Signal.h"
 
 
 Signal::Signal(void)
@@ -35,6 +35,17 @@ void Signal::setFrequence(uint16_t _freq)
 	frequence = _freq;
 }
 
+void Signal::setSymmetry(int _sym)
+{
+	if (_sym < 0) _sym = 0;
+	if (_sym > 100) _sym = 100;
+	symmetry = _sym;
+}
+
+void Signal::setAmplitude(float _ampl) {
+	amplitude = _ampl;
+}
+
 void Signal::setMode(byte _mode) {
 	mode = _mode;
 }
@@ -61,6 +72,11 @@ uint16_t Signal::getFrequence(void) const
 	return uint16_t(frequence);
 }
 
+int Signal::getSymmetry(void) const
+{
+	return (int)symmetry;
+}
+
 uint16_t Signal::getVal(int _number) const {
 	return uint16_t(val[_number]);
 }
@@ -73,7 +89,7 @@ byte Signal::getMode(void) const {
 //------------------------------------------------------------------------------------------------
 // рассчитывает амплитуду и смещение относ. оси OY
 // minVal и maxVal задают "размах" сигнала в вольтах
-void Signal::setParam(float _minVal, float _maxVal) {
+void Signal::setParam(float _minVal, float _maxVal, float _setX, uint16_t _freq, uint16_t _cycles, int _symmetry) {
 
 	if (_minVal < -10.79967041015625) _minVal = -10.79967041015625;
 	if (_maxVal > 10.79967041015625) _maxVal = 10.79967041015625;
@@ -124,6 +140,11 @@ void Signal::setParam(float _minVal, float _maxVal) {
 	double ampl;
 	ampl = Abs(_maxVal - _minVal) / 2;
 	setAmplitude(ampl);
+
+	setOffsetX(_setX);						// выставляет начальную фазу (в градусах)
+	setFrequence(_freq);					// выставляет частоту сигнала
+	setCycles(_cycles);						// выставляет число генерируемых периодов ( 0 - continium mode )
+	setSymmetry(_symmetry);					// выставляет симметрию сигнала (для синуса 100% const)
 
 	setVal(diapason);
 }

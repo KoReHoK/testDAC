@@ -1,35 +1,15 @@
-#include "C:\Users\Andrey\Desktop\Linerization\Working Test\testDAC\include\Triangle.h"
+#include "C:\Users\Andrey\Desktop\Linearization\Linerization\Working Test\version 1.1\include\Triangle.h"
 
 
-Triangle::Triangle(float _minVal, float _maxVal, float _setX, uint16_t _freq, uint16_t _cycles, int _symmetry)
+Triangle::Triangle()
 {
-	setSymmetry(_symmetry);
-	setParam(_minVal, _maxVal);		// _minVal, _maxVal "размах" сигнала в вольтах
-	setOffsetX(_setX);				// выставляет начальную фазу (в градусах)
-	setFrequence(_freq);			// выставляет частоту сигнала
-	setCycles(_cycles);				// выставляет число генерируемых периодов ( 0 - continium mode )
+	for (int i = 0; i < diskret; i++)
+		val[i] = 0x0;
 }
 
 Triangle::~Triangle()
 {
 }
-
-//--------------------------------------------------------
-
-void Triangle::setSymmetry(int _sym)
-{
-	symmetry = _sym;
-}
-
-int Triangle::getSymmetry(void)
-{
-	return int(symmetry);
-}
-
-void Triangle::setAmplitude(float _ampl) {
-	amplitude = 2*_ampl;
-}
-
 
 
 //------------------------------------------------------------------------------------------------
@@ -41,7 +21,7 @@ void Triangle::setVal(float _diap) {
 
 	for (int i=0; i<Xb; i++)
 	{
-		value = (offsetY + (amplitude / Xb)*i) * 0xFFFF / _diap;
+		value = (offsetY + (2*amplitude / Xb)*i) * 0xFFFF / _diap;
 		if (value>0xFFFF) value=0xFFFF;
 		if (value<0x0) value=0x0;
 
@@ -53,7 +33,7 @@ void Triangle::setVal(float _diap) {
 	for (int i = 0; i < (Xc - Xb); i++)
 	{
 		
-		value = val[Xb-1] - ((amplitude/(Xc - Xb))*i)* 0xFFFF / _diap;
+		value = val[Xb-1] - ((2*amplitude/(Xc - Xb))*i)* 0xFFFF / _diap;
 		if (value>0xFFFF) value = 0xFFFF;
 		if (value<0x0) value = 0x0;
 

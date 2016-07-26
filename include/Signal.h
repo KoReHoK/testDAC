@@ -1,5 +1,4 @@
 #pragma once
-#define PI 3.14159265		// число ПИ
 #define diskret 100			// кол-во отсчетов сигнала
 #include "Arduino.h"
 
@@ -12,6 +11,7 @@ protected:
 	uint16_t offsetX;		// начальная фаза (в дискретах)
 	uint16_t cycles;		// кол-во циклов
 	uint16_t frequence;		// частота сигнала
+	int symmetry;			// симметрия сигнала (для sin 100% const)
 
 	uint16_t val[diskret];	// массив значений сигнала
 
@@ -21,22 +21,24 @@ public:
 	Signal(void);
 	~Signal(void);
 	
-	virtual void setAmplitude(float) = 0;	// для каждого вида сигнала по своему высчитывается амплитуда
+	void setAmplitude(float);	
 	void setOffsetY(float);
 	void setOffsetX(float);
 	void setCycles(uint16_t);
 	void setFrequence(uint16_t);
+	void setSymmetry(int);
 
 	float getAmplitude(void) const;
 	float getOffsetY(void) const;
 	uint16_t getOffsetX(void) const;
 	uint16_t getCycles(void) const;
 	uint16_t getFrequence(void) const;
+	int getSymmetry(void) const;
 
-	virtual void setVal(float) = 0;
+	virtual void setVal(float) = 0;		// для каждого вида сигнала по своему высчитывается массив значений
 	uint16_t getVal(int) const;
 
-	void setParam(float, float);
+	void setParam(float _minVal, float _maxVal, float _setX, uint16_t _freq, uint16_t _cycles, int _symmetry);
 
 	void setMode(byte);
 	byte getMode(void) const;

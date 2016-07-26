@@ -1,23 +1,17 @@
-#include "C:\Users\Andrey\Desktop\Linerization\Working Test\testDAC\include\Sinus.h"
+#include "C:\Users\Andrey\Desktop\Linearization\Linerization\Working Test\version 1.1\include\Sinus.h"
 #include <math.h>
 
 
-Sinus::Sinus(float _minVal, float _maxVal, float _setX, uint16_t _freq, uint16_t _cycles)
+Sinus::Sinus()
 {
-	setParam(_minVal, _maxVal);				// _minVal, _maxVal "размах" сигнала в вольтах
-	setOffsetX(_setX);						// выставляет начальную фазу (в градусах)
-	setFrequence(_freq);					// выставляет частоту сигнала
-	setCycles(_cycles);						// выставляет число генерируемых периодов ( 0 - continium mode )
+	for (int i = 0; i < diskret; i++)
+		val[i] = 0x0;
 }
 
 Sinus::~Sinus()
 {
 }
 
-//----------------------------------------------------------------------------
-void Sinus::setAmplitude(float _ampl) {
-	amplitude = _ampl;
-}
 
 //------------------------------------------------------------------------------------------------
 // инициализирует массив значений сигнала sin(x)
@@ -26,7 +20,7 @@ void Sinus::setVal(float _diap) {
 	double rad;
 	uint16_t value;
 
-	rad = 2 * PI / diskret;
+	rad = radians(360.0 / diskret);
 
 	for (int i = 0; i<diskret; i++)
 	{
