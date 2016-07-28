@@ -1,6 +1,9 @@
 #pragma once
 #define diskret 100			// кол-во отсчетов сигнала
 #include "Arduino.h"
+#include <assert.h>
+
+enum Signal_ID { Sinus_ID = 0, Triangle_ID, Rectangle_ID };
 
 class Signal
 {
@@ -10,8 +13,8 @@ protected:
 	float offsetY;			// смещение относительно оси OY
 	uint16_t offsetX;		// начальная фаза (в дискретах)
 	uint16_t cycles;		// кол-во циклов
-	uint16_t frequence;		// частота сигнала
-	int symmetry;			// симметрия сигнала (для sin 100% const)
+	uint16_t period;		// частота сигнала
+	uint16_t symmetry;		// симметрия сигнала (для sin 100% const)
 
 	uint16_t val[diskret];	// массив значений сигнала
 
@@ -25,15 +28,15 @@ public:
 	void setOffsetY(float);
 	void setOffsetX(float);
 	void setCycles(uint16_t);
-	void setFrequence(uint16_t);
-	void setSymmetry(int);
+	void setPeriod(uint16_t);
+	void setSymmetry(uint16_t);
 
 	float getAmplitude(void) const;
 	float getOffsetY(void) const;
 	uint16_t getOffsetX(void) const;
 	uint16_t getCycles(void) const;
-	uint16_t getFrequence(void) const;
-	int getSymmetry(void) const;
+	uint16_t getPeriod(void) const;
+	uint16_t getSymmetry(void) const;
 
 	virtual void setVal(float) = 0;		// для каждого вида сигнала по своему высчитывается массив значений
 	uint16_t getVal(int) const;
@@ -43,5 +46,5 @@ public:
 	void setMode(byte);
 	byte getMode(void) const;
 
+	static Signal* createSignal(Signal_ID);
 };
-

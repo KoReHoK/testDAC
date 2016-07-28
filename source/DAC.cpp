@@ -1,11 +1,9 @@
 #include "C:\Users\Andrey\Desktop\Linearization\Linerization\Working Test\version 1.1\include\DAC.h"
 
+Signal* sign;
 
-
-DAC::DAC(byte _numbCanal): numbCanal(_numbCanal)
+DAC::DAC()
 {
-	for (int i = 0; i < diskret; i++)
-		val[i] = 0x0;
 }
 
 
@@ -13,22 +11,95 @@ DAC::~DAC()
 {
 }
 
-uint16_t DAC::getFrequence(void)
-{
-	return uint16_t(frequence);
+void DAC::setDAC(uint16_t DACValue, Canal_ID DACNumber) { //CHECKED OK
+
+	unsigned long DACAddress;
+	unsigned long data;	//data is the voltage requested from the user application
+
+
+	switch (DACNumber) {
+
+	case canalA:
+
+		DACAddress = 0x00000;
+		data = DACAddress | channel_A.getVal(DACValue);		// val[DACValue];
+
+		break;
+
+	case canalB:
+
+		DACAddress = 0x10000;
+		data = DACAddress | channel_B.getVal(DACValue);
+
+		break;
+
+	case canalC:
+
+		DACAddress = 0x20000;
+		data = DACAddress | channel_C.getVal(DACValue);
+
+		break;
+
+	case canalD:
+
+		DACAddress = 0x30000;
+		data = DACAddress | channel_D.getVal(DACValue);
+
+		break;
+
+	}
+
+	sendData(data);
+
+	loadDACs();
+
 }
 
-uint16_t DAC::getOffsetX(void)
-{
-	return uint16_t(offsetX);
+void DAC::loadDACs(void) { //CHECKED OK
+
+	unsigned long data = 0x1D0000;
+
+	sendData(data);
 }
 
-byte DAC::getNumbCanal(void)
-{
-	return byte(numbCanal);
+void DAC::sendData(long data) { //CHECKED OK
+
+	digitalWrite(sspin, LOW);
+
+	unsigned char *p = (unsigned char*)&data;
+
+	for (int i = 2; i >= 0; i--) { //MSB first
+
+		SPI.transfer(p[i]);
+
+	}
+
+	digitalWrite(sspin, HIGH);
+
 }
 
-void DAC::config(void)
+uint16_t DAC::getOffsetX(Canal_ID _id) const
+{
+	switch (_id) {
+	case canalA: return uint16_t(channel_A.getOffsetX()); break;
+	case canalB: return uint16_t(channel_B.getOffsetX()); break;
+	case canalC: return uint16_t(channel_C.getOffsetX()); break;
+	case canalD: return uint16_t(channel_D.getOffsetX()); break;
+	}
+	
+}
+
+void DAC::setOffsetX(uint16_t _val, Canal_ID _id)
+{
+	switch (_id) {
+	case canalA: channel_A.setOffsetX(_val); break;
+	case canalB: channel_B.setOffsetX(_val); break;
+	case canalC: channel_C.setOffsetX(_val); break;
+	case canalD: channel_D.setOffsetX(_val); break;
+	}
+}
+
+void DAC::configDAC(Canal_ID _id)
 {
 	/*
 
@@ -52,23 +123,11 @@ void DAC::config(void)
 
 	unsigned long output;
 
-	switch (numbCanal) {
+	switch (_id) {
 
-	case 4:
+	case canalD:
 
-		/*
-		---------------------------------------------------------
-		Output scale values. Must have overhead supply in order to accomodate
-		0xB0000 = 5V
-		0xB0001 = 10V
-		0xB0002 = 10.8V
-		0xB0003 = +-5V
-		0xB0004 = +-10V
-		0xB0005 = +-10.8V
-		---------------------------------------------------------
-
-		*/
-		switch (mode) {
+		switch (channel_D.getMode()) {
 
 		case 1: //0-5V
 
@@ -109,23 +168,9 @@ void DAC::config(void)
 
 		sendData(output); break;
 
-	case 3:
+	case canalC:
 
-		// fixed typo by Bernd Rilling 12/2013
-		// 0x50000 should be 0xA0000
-		/*
-		---------------------------------------------------------
-		Output scale values. Must have overhead supply in order to accomodate
-		0xA0000 = 5V
-		0xA0001 = 10V
-		0xA0002 = 10.8V
-		0xA0003 = +-5V
-		0xA0004 = +-10V
-		0xA0005 = +-10.8V
-		---------------------------------------------------------
-
-		*/
-		switch (mode) {
+		switch (channel_C.getMode()) {
 
 		case 1: //0-5V
 
@@ -166,21 +211,9 @@ void DAC::config(void)
 
 		sendData(output); break;
 
-	case 2:
+	case canalB:
 
-		/*
-		---------------------------------------------------------
-		Output scale values. Must have overhead supply in order to accomodate
-		0x90000 = 5V
-		0x90001 = 10V
-		0x90002 = 10.8V
-		0x90003 = +-5V
-		0x90004 = +-10V
-		0x90005 = +-10.8V
-		---------------------------------------------------------
-
-		*/
-		switch (mode) {
+		switch (channel_B.getMode()) {
 
 		case 1: //0-5V
 
@@ -221,22 +254,9 @@ void DAC::config(void)
 
 		sendData(output); break;
 
-	case 1:
+	case canalA:
 
-		/*
-		---------------------------------------------------------
-		Output scale values. Must have overhead supply in order to accomodate
-		0x80000 = 5V
-		0x80001 = 10V
-		0x80002 = 10.8V
-		0x80003 = +-5V
-		0x80004 = +-10V
-		0x80005 = +-10.8V
-		---------------------------------------------------------
-
-		*/
-
-		switch (mode) {
+		switch (channel_A.getMode()) {
 
 		case 1: //0-5V
 
@@ -280,102 +300,96 @@ void DAC::config(void)
 	}
 }
 
-void DAC::powerUpDACs(void) { //CHECKED OK
-
-	sendData(0x10000F); //Send B000100000000000000001111 to initialize 4 DACs
-}
-
-void DAC::powerDownDACs(void){
-
-	sendData(0x100000); //Send B000100000000000000000000
-}
-
-void DAC::setDAC(int DACValue, byte DACNumber) { //CHECKED OK
-
-	unsigned long DACAddress;
-	unsigned long data;	//data is the voltage requested from the user application
-
-
-	switch (DACNumber) {
-
-	case 1:
-
-		DACAddress = 0x00000;
-		data = DACAddress | val[DACValue];
-
-		break;
-
-	case 2:
-
-		DACAddress = 0x10000;
-		data = DACAddress | val[DACValue];
-
-		break;
-
-	case 3:
-
-		DACAddress = 0x20000;
-		data = DACAddress | val[DACValue];
-
-		break;
-
-	case 4:
-
-		DACAddress = 0x30000;
-		data = DACAddress | val[DACValue];
-
-		break;
-
-	}
-
-	sendData(data);
-
-	loadDACs();
-
-}
-
-void DAC::setOffsetX(uint16_t _offsetX)
+void DAC::setVal(Signal& _sign, Canal_ID _id)
 {
-	offsetX = _offsetX;
-}
-
-void DAC::setVal(Signal &sign)
-{
-	offsetX = sign.getOffsetX();
-	cycles = sign.getCycles();
-	frequence = sign.getFrequence();
-	mode = sign.getMode();
-
-	for (int i = 0; i < diskret; i++)
-		val[i] = sign.getVal(i);
-}
-
-void DAC::loadDACs(void) { //CHECKED OK
-
-	unsigned long data = 0x1D0000;
-
-	sendData(data);
-}
-void DAC::clearDACs(void) { //CHECKED OK
-
-	unsigned long data = 0x1C0000;
-
-	sendData(data);
-
-}
-
-void DAC::sendData(long data) { //CHECKED OK
-
-	digitalWrite(sspin, LOW);
-
-	unsigned char *p = (unsigned char*)&data;
-
-	for (int i = 2; i >= 0; i--) { //MSB first
-
-		SPI.transfer(p[i]);
-
+	switch (_id)
+	{
+		case canalA: channel_A.setVal(_sign); break;
+		case canalB: channel_B.setVal(_sign); break;
+		case canalC: channel_C.setVal(_sign); break;
+		case canalD: channel_D.setVal(_sign); break;
 	}
+		
+}
 
-	digitalWrite(sspin, HIGH);
+
+
+
+
+void DAC::start(void) { //CHECKED OK
+
+	sendData(0x10000F); //Send B000100000000000000001111 power up all DACs
+
+	Timer0.start(channel_A.getPeriod());
+	Timer1.start(channel_B.getPeriod());
+	Timer2.start(channel_C.getPeriod());
+	Timer3.start(channel_D.getPeriod());
+}
+
+void DAC::stop(void){
+
+	Timer0.stop();
+	Timer1.stop();
+	Timer2.stop();
+	Timer3.stop();
+
+	sendData(0x100000); //Send B000100000000000000000000 power down all DACs
+}
+
+void DAC::config(Signal_ID sign_id, Canal_ID canal_id, float _minValue, float _maxValue, float _offSetX, uint16_t _frequence, uint16_t _kolCycles, uint16_t _symmetry) {
+
+	switch (canal_id) {
+	case canalA:
+	{
+
+		sign = Signal::createSignal(sign_id);
+		sign->setParam(_minValue, _maxValue, _offSetX, _frequence, _kolCycles, _symmetry);
+		setVal(*sign, canalA);
+
+		configDAC(canalA); //Must configure before turning the DACs on
+
+//		Timer0.attachInterrupt(interFuncA);
+
+	}break;
+
+	case canalB:
+	{
+
+		sign = Signal::createSignal(sign_id);
+		sign->setParam(_minValue, _maxValue, _offSetX, _frequence, _kolCycles, _symmetry);
+		setVal(*sign, canalB);
+
+		configDAC(canalB); //Must configure before turning the DACs on
+
+//		Timer1.attachInterrupt(interFuncB);
+
+	}break;
+
+	case canalC:
+	{
+
+		sign = Signal::createSignal(sign_id);
+		sign->setParam(_minValue, _maxValue, _offSetX, _frequence, _kolCycles, _symmetry);
+		setVal(*sign, canalC);
+
+		configDAC(canalC); //Must configure before turning the DACs on
+
+//		Timer2.attachInterrupt(interFuncC);
+
+	}break;
+
+	case canalD:
+	{
+
+		sign = Signal::createSignal(sign_id);
+		sign->setParam(_minValue, _maxValue, _offSetX, _frequence, _kolCycles, _symmetry);
+		setVal(*sign, canalD);
+
+		configDAC(canalD); //Must configure before turning the DACs on
+
+//		Timer3.attachInterrupt(interFuncD);
+
+	}break;
+	}
 
 }

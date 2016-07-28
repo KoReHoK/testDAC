@@ -1,4 +1,7 @@
 #include "C:\Users\Andrey\Desktop\Linearization\Linerization\Working Test\version 1.1\include\Signal.h"
+#include "C:\Users\Andrey\Desktop\Linearization\Linerization\Working Test\version 1.1\include\Sinus.h"
+#include "C:\Users\Andrey\Desktop\Linearization\Linerization\Working Test\version 1.1\include\Rectangle.h"
+#include "C:\Users\Andrey\Desktop\Linearization\Linerization\Working Test\version 1.1\include\Triangle.h"
 
 
 Signal::Signal(void)
@@ -28,14 +31,14 @@ void Signal::setCycles(uint16_t _cycles)
 	cycles = _cycles;
 }
 
-void Signal::setFrequence(uint16_t _freq)
+void Signal::setPeriod(uint16_t _per)
 {
-	if (_freq < 0) _freq = 0;
-	if (_freq > 10000) _freq = 10000;
-	frequence = _freq;
+	if (_per < 0) _per = 0;
+	if (_per > 10000) _per = 10000;
+	period = _per;
 }
 
-void Signal::setSymmetry(int _sym)
+void Signal::setSymmetry(uint16_t _sym)
 {
 	if (_sym < 0) _sym = 0;
 	if (_sym > 100) _sym = 100;
@@ -67,14 +70,14 @@ uint16_t Signal::getCycles(void) const
 	return uint16_t(cycles);
 }
 
-uint16_t Signal::getFrequence(void) const
+uint16_t Signal::getPeriod(void) const
 {
-	return uint16_t(frequence);
+	return uint16_t(period);
 }
 
-int Signal::getSymmetry(void) const
+uint16_t Signal::getSymmetry(void) const
 {
-	return (int)symmetry;
+	return (uint16_t)symmetry;
 }
 
 uint16_t Signal::getVal(int _number) const {
@@ -83,6 +86,26 @@ uint16_t Signal::getVal(int _number) const {
 
 byte Signal::getMode(void) const {
 	return byte(mode);
+}
+
+Signal* Signal::createSignal(Signal_ID id)
+{
+	Signal* ptr;
+
+	switch (id) {
+		case Sinus_ID:
+			ptr = new Sinus();
+			break;
+		case Triangle_ID:
+			ptr = new Triangle();
+			break;
+		case Rectangle_ID:
+			ptr = new Rectangle();
+			break;
+		default:
+			assert(false);
+	}
+	return ptr;
 }
 
 //------------------------------------------------------------------------------------------------
@@ -142,7 +165,7 @@ void Signal::setParam(float _minVal, float _maxVal, float _setX, uint16_t _freq,
 	setAmplitude(ampl);
 
 	setOffsetX(_setX);						// выставляет начальную фазу (в градусах)
-	setFrequence(_freq);					// выставляет частоту сигнала
+	setPeriod(_freq);						// выставляет частоту сигнала
 	setCycles(_cycles);						// выставляет число генерируемых периодов ( 0 - continium mode )
 	setSymmetry(_symmetry);					// выставляет симметрию сигнала (для синуса 100% const)
 
